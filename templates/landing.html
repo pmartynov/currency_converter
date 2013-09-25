@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block additional_js %}
+    <script type="text/javascript" src="{{STATIC_URL}}js/landing.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="exchanger shadow_block raised">
+        <form class="raised_inner" method="post">{% csrf_token %}
+            <div class="from_currency">
+                <div class="amount_wrapper control-group">
+                    <input class="amount input-small" type="text" placeholder="Amount" name="amount"
+                        value={% if amount %} {{ amount }} {% else %} "" {% endif %}>
+                </div>
+                <select name="from">
+                    {% for short, long in currencies.items %}
+                        {% if short == curr_from %}
+                            <option selected="selected" value="{{ short }}">{{ short }} - {{ long }}</option>
+                        {% else %}
+                            <option value="{{ short }}">{{ short }} - {{ long }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="separator">convert to</div>
+            <div class="to_currency">
+                <select name="to">
+                    {% for short, long in currencies.items %}
+                        {% if short == curr_to %}
+                            <option selected="selected" value="{{ short }}">{{ short }} - {{ long }}</option>
+                        {% else %}
+                            <option value="{{ short }}">{{ short }} - {{ long }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <button class="btn convert_btn" type="submit">Convert</button>
+            </div>
+        </form>
+    </div>
+    <div class="result">
+        {% block conversion_result %}
+        {% endblock %}
+    </div>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "landing.html" %}
+
+{% block conversion_result %}
+    <div class="result_info shadow_block raised">
+        <div class="raised_inner">
+            <div class="result_text">
+                {{ amount }} {{ curr_from }} is {{ result }} {{ curr_to }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

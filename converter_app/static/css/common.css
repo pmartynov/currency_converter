@@ -1,0 +1,103 @@
+body {
+    background-image: url("../img/blackclouds.jpg");
+}
+
+.content_wrapper {
+    padding-top: 50px;
+    text-align: center;
+}
+
+.content {
+    display: inline-block;
+}
+
+.logo {
+    display: inline-block;
+    width: 650px;
+    height: 43px;
+    background-image: url("../img/logo.png");
+}
+
+.exchanger {
+    font-size:12px;
+    width: 400px;
+}
+
+.exchanger form {
+    margin: 0px;
+}
+
+.exchanger select {
+    width: auto;
+}
+
+.amount_wrapper {
+    display: inline-block;
+}
+
+.from_currency {
+    height: 40px;
+    clear: both;
+}
+
+.from_currency select {
+    float: right;
+}
+
+.separator {
+    margin: 0px 0px 10px 0px;
+    font-style: italic;
+}
+
+.convert_btn {
+    font-weight: bold;
+    margin-top:10px;
+}
+
+.result_text {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.error_message {
+    color: #FF0000;
+}
+
+/* shadow */
+
+.raised {
+    border: #CCC 1px solid;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 0, 0, 0.1) inset;
+       -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 0, 0, 0.1) inset;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 0, 0, 0.1) inset;
+    -webkit-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5),
+                        0 1px 4px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 0, 0, 0.1) inset;
+       -moz-box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5),
+                        0 1px 4px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 0, 0, 0.1) inset;
+            box-shadow: 0 15px 10px -10px rgba(0, 0, 0, 0.5),
+                        0 1px 4px rgba(0, 0, 0, 0.3),
+                        0 0 40px rgba(0, 0, 0, 0.1) inset;
+}
+
+.raised:before,
+.raised:after {
+    content:"";
+    position:absolute;
+    z-index:-2;
+}
+
+.shadow_block {
+    position:relative;
+    padding:30px 60px;
+    margin:2em 10px 4em;
+    display: inline-block;
+    border: #CCC 1px solid;
+    background:#fff;
+}
+
+/*end shadow*/

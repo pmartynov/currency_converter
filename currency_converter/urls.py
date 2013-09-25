@@ -1,0 +1,19 @@
+from django.conf.urls import handler404, handler500
+from django.conf.urls import patterns, include, url
+from converter_app import views
+
+from django.contrib import admin
+admin.autodiscover()
+
+urlpatterns = patterns('converter_app.views',
+    url(r'^$', 'landing'),
+    url(r'^(?P<amount>[0-9]+(\.[0-9]{1,2})?)/(?P<curr_from>\w{3})/to/(?P<curr_to>\w{3})/in/(?P<response_format>\w{4})$',
+        'conversion_result', name="conversion_result"),
+)
+
+urlpatterns += patterns('',
+    url(r'^admin/', include(admin.site.urls)),
+)
+
+#handler404 = 'views.error404'
+#handler500 = 'views.error500'
