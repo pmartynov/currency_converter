@@ -1,0 +1,13 @@
+<select name={{ name }}>
+    {% for currency in currencies %}
+        {% if currency.short_name == selected_curr %}
+            <option selected="selected" value="{{ currency.short_name }}">
+                {{ currency.short_name }} - {{ currency.long_name }}
+            </option>
+        {% else %}
+            <option value="{{ currency.short_name }}">
+                {{ currency.short_name }} - {{ currency.long_name }}
+            </option>
+        {% endif %}
+    {% endfor %}
+</select>

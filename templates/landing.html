@@ -12,35 +12,11 @@
                     <input class="amount input-small" type="text" placeholder="Amount" name="amount"
                         value={% if amount %} {{ amount }} {% else %} "" {% endif %}>
                 </div>
-                <select name="from">
-                    {% for currency in currencies %}
-                        {% if currency.short_name == curr_from %}
-                            <option selected="selected" value="{{ currency.short_name }}">
-                                {{ currency.short_name }} - {{ currency.long_name }}
-                            </option>
-                        {% else %}
-                            <option value="{{ currency.short_name }}">
-                                {{ currency.short_name }} - {{ currency.long_name }}
-                            </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                {% include 'partials/currencies_dropdown.html' with name="from" selected_curr=curr_from %}
             </div>
             <div class="separator">convert to</div>
             <div class="to_currency">
-                <select name="to">
-                    {% for currency in currencies %}
-                        {% if currency.short_name == curr_to %}
-                            <option selected="selected" value="{{ currency.short_name }}">
-                                {{ currency.short_name }} - {{ currency.long_name }}
-                            </option>
-                        {% else %}
-                            <option value="{{ currency.short_name }}">
-                                {{ currency.short_name }} - {{ currency.long_name }}
-                            </option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                {% include 'partials/currencies_dropdown.html' with name="to" selected_curr=curr_to %}
             </div>
             <div>
                 <button class="btn convert_btn" type="submit">Convert</button>
