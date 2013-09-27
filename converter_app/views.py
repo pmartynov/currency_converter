@@ -1,9 +1,10 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound, HttpResponseServerError
 from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.template.response import TemplateResponse
+from django.template import loader
 from converter_app.models import Currency, ExchangeRate
 from decimal import Decimal
 import sys
@@ -85,6 +86,16 @@ def _binary_search(a, x, lo=0, hi=None):
             return mid
 
     return -1
+
+
+def error404(request):
+    t = loader.get_template('404.html')
+    return HttpResponseNotFound(t.render(RequestContext(request)))
+
+
+def error500(request):
+    t = loader.get_template('500.html')
+    return HttpResponseServerError(t.render(RequestContext(request)))
 
 
 def landing(request):

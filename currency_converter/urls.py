@@ -1,7 +1,5 @@
-from django.conf.urls import handler404, handler500
 from django.conf.urls import patterns, include, url
 from converter_app import views
-
 from django.contrib import admin
 admin.autodiscover()
 
@@ -15,5 +13,5 @@ urlpatterns += patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-#handler404 = 'views.error404'
-#handler500 = 'views.error500'
+handler404 = views.error404
+handler500 = views.error500
