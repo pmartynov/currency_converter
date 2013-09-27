@@ -1,9 +1,16 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 
 class Currency(models.Model):
     short_name = models.CharField(primary_key=True, max_length=3)
     long_name = models.CharField(max_length=50)
+
+    def is_less_than(self, other):
+        return self.short_name < other.short_name
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.short_name == other.short_name
 
 
 class ExchangeRate(models.Model):
@@ -17,3 +24,11 @@ class ExchangeRate(models.Model):
 
         if ex_rate.exists():
             raise ValidationError('ExchangeRate row with these currencies already exists')
+
+    def is_less_than(self, other):
+        return self.currency_from.is_less_than(other.currency_from) or\
+            self.currency_from == other.currency_from and self.currency_to.is_less_than(other.currency_to)
+
+    def __eq__(self, other):
+        return isinstance(other, self.__class__) and self.currency_from == other.currency_from\
+            and self.currency_to == other.currency_to
