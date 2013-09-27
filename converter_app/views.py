@@ -3,19 +3,14 @@ from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template.response import TemplateResponse
+from converter_app.models import Currency, ExchangeRate
+from decimal import Decimal
 import sys
-import requests
 import json
 
-OPEN_EXCHANGE_RATE_APP_ID = "8c5757490b42495c892fe171fa2603a7"
-OPEN_EXCHANGE_RATE_URL = "http://openexchangerates.org/api/latest.json?app_id=" + OPEN_EXCHANGE_RATE_APP_ID
 
-currencies = {
-    "AED": "United Arab Emirates Dirham",
-    "AFN": "Afghan Afghani",
-    "ALL": "Albanian Lek",
-    "AMD": "Armenian Dram"
-}
+def _strip_zeros(dec):
+    return Decimal(str(round(dec, 6)).strip('0').rstrip('.'))
 
 
 def _get_redirect_obj(req):
@@ -44,8 +39,7 @@ def _conversion_result_html(request, result, conversion):
 
 
 def _conversion_result_json(request, result, conversion):
-    response_data = {'success': True, 'result': result}
-    return HttpResponse(json.dumps(response_data), content_type="application/json")
+    return HttpResponse(json.dumps({'success': True, 'result': result}), content_type="application/json")
 
 
 def _conversion_result_text(request, result, conversion):
@@ -56,7 +50,7 @@ def landing(request):
     if request.method == 'POST':
         return _get_redirect_obj(request.POST)
 
-    return render_to_response('landing.html', {'currencies': currencies}, RequestContext(request))
+    return render_to_response('landing.html', {'currencies': Currency.objects.all()}, RequestContext(request))
 
 
 def conversion_result(request, curr_from, curr_to, amount, response_format):
@@ -64,26 +58,29 @@ def conversion_result(request, curr_from, curr_to, amount, response_format):
         return _get_redirect_obj(request.POST)
 
     try:
-        amount = float(amount)
+        amount = Decimal(amount)
         if amount < 0:
             return _process_error(request, 403, 'Amount is negative', response_format)
 
-        rates = requests.get(OPEN_EXCHANGE_RATE_URL).json()["rates"]
-        result = amount / rates[curr_from] * rates[curr_to]
+        curr_usd = Currency.objects.get(short_name="USD")
+        curr_from = Currency.objects.get(short_name=curr_from)
+        curr_to = Currency.objects.get(short_name=curr_to)
+        ex_rate_from = ExchangeRate.objects.get(currency_from=curr_usd, currency_to=curr_from)
+        ex_rate_to = ExchangeRate.objects.get(currency_from=curr_usd, currency_to=curr_to)
+
+        result = amount / ex_rate_from.rate * ex_rate_to.rate
 
         conversion = {
-            'curr_from': curr_from,
-            'curr_to': curr_to,
-            'amount': str(amount).rstrip('0').rstrip('.'),
-            'result': str(result).rstrip('0').rstrip('.'),
-            'currencies': currencies
+            'curr_from': curr_from.short_name,
+            'curr_to': curr_to.short_name,
+            'amount': _strip_zeros(amount),
+            'result': _strip_zeros(result),
+            'currencies': Currency.objects.all()
         }
 
         process_conversion_result = getattr(sys.modules[__name__], "_conversion_result_%s" % response_format)
         return process_conversion_result(request, result, conversion)
 
-    except requests.exceptions.ConnectionError:
-        return _process_error(request, 503, 'Openexchangerates.org is not available', response_format)
     except KeyError:
         return _process_error(request, 400, 'Currency is not supported', response_format)
     except ValueError:

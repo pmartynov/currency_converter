@@ -27,10 +27,6 @@ body {
     margin: 0px;
 }
 
-.exchanger select {
-    width: auto;
-}
-
 .amount_wrapper {
     display: inline-block;
 }
@@ -41,7 +37,11 @@ body {
 }
 
 .from_currency select {
-    float: right;
+    width: 270px;
+}
+
+.to_currency select {
+    width: 378px;
 }
 
 .separator {
