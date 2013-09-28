@@ -33,16 +33,16 @@ def _process_error(request, status, message, response_format):
         return TemplateResponse(request, 'error.html', context={'message': 'Format is not supported'}, status=400)
 
 
-def _conversion_result_html(request, result, conversion):
+def _conversion_result_html(request, conversion):
     return render_to_response('conversion_result.html', conversion, RequestContext(request))
 
 
-def _conversion_result_json(request, result, conversion):
-    return HttpResponse(json.dumps({'success': True, 'result': result}), content_type="application/json")
+def _conversion_result_json(request, conversion):
+    return HttpResponse(json.dumps({'success': True, 'result': conversion["result"]}), content_type="application/json")
 
 
-def _conversion_result_text(request, result, conversion):
-    return HttpResponse(result, content_type="text/plain")
+def _conversion_result_text(request, conversion):
+    return HttpResponse(conversion["result"], content_type="text/plain")
 
 
 CURRENCIES_KEY = "currencies"
@@ -91,9 +91,6 @@ def conversion_result(request, curr_from, curr_to, amount, response_format):
 
     try:
         amount = Decimal(amount)
-        if amount < 0:
-            return _process_error(request, 403, 'Amount is negative', response_format)
-
         currencies = _get_currencies()
         exchange_rates = _get_exchange_rates()
 
@@ -117,9 +114,7 @@ def conversion_result(request, curr_from, curr_to, amount, response_format):
         }
 
         process_conversion_result = getattr(sys.modules[__name__], "_conversion_result_%s" % response_format)
-        return process_conversion_result(request, result, conversion)
+        return process_conversion_result(request, conversion)
 
-    except KeyError:
+    except AssertionError:
         return _process_error(request, 400, 'Currency is not supported', response_format)
-    except ValueError:
-        return _process_error(request, 400, 'Amount is neither decimal nor integer', response_format)
