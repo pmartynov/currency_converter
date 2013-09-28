@@ -5,14 +5,11 @@ from django.core.urlresolvers import reverse
 from django.core.cache import cache
 from django.template.response import TemplateResponse
 from django.template import loader
-from converter_app.models import Currency, ExchangeRate
 from decimal import Decimal
+from converter_app.models import Currency, ExchangeRate
+from converter_app import helpers
 import sys
 import json
-
-
-def _strip_zeros(dec):
-    return Decimal(str(round(dec, 6)).strip('0').rstrip('.'))
 
 
 def _get_redirect_obj(req):
@@ -71,23 +68,6 @@ def _get_exchange_rates():
     return exchange_rates
 
 
-def _binary_search(a, x, lo=0, hi=None):
-    if hi is None:
-        hi = len(a)
-
-    while lo < hi:
-        mid = (lo + hi) / 2
-        mid_model = a[mid]
-        if mid_model.is_less_than(x):
-            lo = mid + 1
-        elif x.is_less_than(mid_model):
-            hi = mid
-        else:
-            return mid
-
-    return -1
-
-
 def error404(request):
     t = loader.get_template('404.html')
     return HttpResponseNotFound(t.render(RequestContext(request)))
@@ -117,22 +97,22 @@ def conversion_result(request, curr_from, curr_to, amount, response_format):
         currencies = _get_currencies()
         exchange_rates = _get_exchange_rates()
 
-        curr_usd = currencies[_binary_search(currencies, Currency(short_name="USD"))]
-        curr_from = currencies[_binary_search(currencies, Currency(short_name=curr_from))]
-        curr_to = currencies[_binary_search(currencies, Currency(short_name=curr_to))]
+        curr_usd = currencies[helpers._binary_search(currencies, Currency(short_name="USD"))]
+        curr_from = currencies[helpers._binary_search(currencies, Currency(short_name=curr_from))]
+        curr_to = currencies[helpers._binary_search(currencies, Currency(short_name=curr_to))]
 
         ex_rate_from = exchange_rates[
-            _binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_from))]
+            helpers._binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_from))]
         ex_rate_to = exchange_rates[
-            _binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_to))]
+            helpers._binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_to))]
 
         result = amount / ex_rate_from.rate * ex_rate_to.rate
 
         conversion = {
             'curr_from': curr_from.short_name,
             'curr_to': curr_to.short_name,
-            'amount': _strip_zeros(amount),
-            'result': _strip_zeros(result),
+            'amount': helpers._strip_zeros(amount),
+            'result': helpers._strip_zeros(result),
             'currencies': currencies
         }
 

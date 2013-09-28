@@ -1,0 +1,15 @@
+from django.contrib import admin
+from converter_app.models import ExchangeRate, Currency
+from converter_app.helpers import _strip_zeros
+
+
+class ExchangeRateAdmin(admin.ModelAdmin):
+    list_display = ('rate_label', 'currency_from', 'currency_to', 'stripped_rate')
+    readonly_fields = ('rate_label', 'currency_from', 'currency_to', 'stripped_rate')
+    ordering = ('currency_from', 'currency_to')
+
+    def stripped_rate(self, obj):
+        return _strip_zeros(obj.rate)
+
+admin.site.register(Currency)
+admin.site.register(ExchangeRate, ExchangeRateAdmin)

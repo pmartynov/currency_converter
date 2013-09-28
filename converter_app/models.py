@@ -12,6 +12,12 @@ class Currency(models.Model):
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.short_name == other.short_name
 
+    def __unicode__(self):
+        return "%s - %s" % (self.short_name, self.long_name)
+
+    class Meta:
+        verbose_name_plural = "currencies"
+
 
 class ExchangeRate(models.Model):
     currency_from = models.ForeignKey(Currency, related_name="+", unique=False)
@@ -28,6 +34,10 @@ class ExchangeRate(models.Model):
     def is_less_than(self, other):
         return self.currency_from.is_less_than(other.currency_from) or\
             self.currency_from == other.currency_from and self.currency_to.is_less_than(other.currency_to)
+
+    @property
+    def rate_label(self):
+        return "%s to %s" % (self.currency_from.short_name, self.currency_to.short_name)
 
     def __eq__(self, other):
         return isinstance(other, self.__class__) and self.currency_from == other.currency_from\
