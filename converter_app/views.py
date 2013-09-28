@@ -38,7 +38,8 @@ def _conversion_result_html(request, conversion):
 
 
 def _conversion_result_json(request, conversion):
-    return HttpResponse(json.dumps({'success': True, 'result': conversion["result"]}), content_type="application/json")
+    return HttpResponse(
+        json.dumps({'success': True, 'result': float(conversion["result"])}), content_type="application/json")
 
 
 def _conversion_result_text(request, conversion):
