@@ -3,19 +3,15 @@ from django.db import transaction
 from celery.task import periodic_task
 from celery.task.schedules import crontab
 from converter_app.models import Currency, ExchangeRate
+from converter_app.external_settings import *
 import requests
-
-
-OER_APP_ID = "8c5757490b42495c892fe171fa2603a7"
-OER_LATEST_URL = "http://openexchangerates.org/api/latest.json?app_id=" + OER_APP_ID
-OER_CURRENCIES_URL = "http://openexchangerates.org/api/currencies.json?app_id=" + OER_APP_ID
 
 
 @periodic_task(run_every=crontab(hour="0-23"))
 @transaction.commit_manually
 def update_currencies():
     try:
-        currencies = requests.get(OER_CURRENCIES_URL).json()
+        currencies = requests.get(ext_settings.OER_CURRENCIES_URL).json()
 
         for short, long in currencies.iteritems():
             currency = Currency(short_name=short, long_name=long.encode('unicode_escape'))
@@ -31,7 +27,7 @@ def update_currencies():
 @transaction.commit_manually
 def update_rates():
     try:
-        rates = requests.get(OER_LATEST_URL).json()["rates"]
+        rates = requests.get(ext_settings.OER_LATEST_URL).json()["rates"]
 
         for short, rate in rates.iteritems():
             curr_from = Currency.objects.get(short_name="USD")

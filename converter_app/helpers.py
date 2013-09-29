@@ -1,11 +1,11 @@
 from decimal import Decimal
 
 
-def _strip_zeros(dec):
+def strip_zeros(dec):
     return Decimal(str(round(dec, 6)).strip('0').rstrip('.'))
 
 
-def _binary_search(a, x, lo=0, hi=None):
+def binary_search(a, x, lo=0, hi=None):
     if hi is None:
         hi = len(a)
 

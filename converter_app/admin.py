@@ -1,6 +1,6 @@
 from django.contrib import admin
 from converter_app.models import ExchangeRate, Currency
-from converter_app.helpers import _strip_zeros
+from converter_app.helpers import strip_zeros
 
 
 class ExchangeRateAdmin(admin.ModelAdmin):
@@ -9,7 +9,8 @@ class ExchangeRateAdmin(admin.ModelAdmin):
     ordering = ('currency_from', 'currency_to')
 
     def stripped_rate(self, obj):
-        return _strip_zeros(obj.rate)
+        return strip_zeros(obj.rate)
+
 
 admin.site.register(Currency)
 admin.site.register(ExchangeRate, ExchangeRateAdmin)
