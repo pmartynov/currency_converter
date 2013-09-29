@@ -11,7 +11,7 @@ import requests
 @transaction.commit_manually
 def update_currencies():
     try:
-        currencies = requests.get(ext_settings.OER_CURRENCIES_URL).json()
+        currencies = requests.get(OER_CURRENCIES_URL).json()
 
         for short, long in currencies.iteritems():
             currency = Currency(short_name=short, long_name=long.encode('unicode_escape'))
@@ -27,7 +27,7 @@ def update_currencies():
 @transaction.commit_manually
 def update_rates():
     try:
-        rates = requests.get(ext_settings.OER_LATEST_URL).json()["rates"]
+        rates = requests.get(OER_LATEST_URL).json()["rates"]
 
         for short, rate in rates.iteritems():
             curr_from = Currency.objects.get(short_name="USD")
