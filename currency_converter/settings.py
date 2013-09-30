@@ -1,3 +1,6 @@
+import djcelery
+djcelery.setup_loader()
+
 # Django settings for currency_converter project.
 
 DEBUG = False
@@ -119,6 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'converter_app',
     'devserver',
+    'djcelery',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
