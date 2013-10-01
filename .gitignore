@@ -1,3 +1,4 @@
 .ropeproject/*
 *.pyc
 .idea/*
+*_local.*
