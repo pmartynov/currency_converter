@@ -4,6 +4,7 @@ import djcelery
 djcelery.setup_loader()
 
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
+PROJECT_ROOT = os.path.join(BASEDIR, '../')
 
 # Django settings for currency_converter project.
 
@@ -114,7 +115,7 @@ ROOT_URLCONF = 'currency_converter.urls'
 WSGI_APPLICATION = 'currency_converter.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(BASEDIR, 'templates'),
+    os.path.join(PROJECT_ROOT, 'templates'),
 )
 
 INSTALLED_APPS = (
