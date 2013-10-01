@@ -1,0 +1,15 @@
+Django==1.5.4
+MySQL-python==1.2.4
+amqp==1.0.13
+anyjson==0.3.3
+billiard==2.7.3.32
+celery==3.0.23
+django-celery==3.0.23
+django-devserver==0.6.2
+ipython==1.1.0
+kombu==2.5.14
+python-dateutil==2.1
+pytz==2013.6
+readline==6.2.4.1
+six==1.4.1
+wsgiref==0.1.2
