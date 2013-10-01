@@ -1,5 +1,9 @@
+import os
+
 import djcelery
 djcelery.setup_loader()
+
+BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # Django settings for currency_converter project.
 
@@ -191,3 +195,12 @@ def get_cache():
         }
 
 CACHES = get_cache()
+
+
+##################################
+#     Local settings block       #
+##################################
+
+if os.path.isfile(os.path.join(BASEDIR, 'settings_local.py')):
+    from .settings_local import *
+
