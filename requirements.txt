@@ -13,3 +13,4 @@ pytz==2013.6
 readline==6.2.4.1
 six==1.4.1
 wsgiref==0.1.2
+requests==2.0.0
