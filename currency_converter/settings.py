@@ -114,7 +114,7 @@ ROOT_URLCONF = 'currency_converter.urls'
 WSGI_APPLICATION = 'currency_converter.wsgi.application'
 
 TEMPLATE_DIRS = (
-    '/home/pmartynov/pmartynov/Work/currency_converter/templates'
+    os.path.join(BASEDIR, 'templates'),
 )
 
 INSTALLED_APPS = (
