@@ -28,14 +28,13 @@ def update_currencies():
 def update_rates():
     try:
         rates = requests.get(OER_LATEST_URL).json()["rates"]
-    except requests.exceptions.ConnectionError:
+    except (requests.exceptions.ConnectionError, KeyError):
         return
 
+    curr_from = Currency.objects.get(short_name="USD")
     for short, rate in rates.iteritems():
-        curr_from = Currency.objects.get(short_name="USD")
         curr_to = Currency.objects.get(short_name=short)
-        ex_rate, created = ExchangeRate.objects.get_or_create(
-            currency_from=curr_from, currency_to=curr_to, defaults={'rate': 1.0})
+        ex_rate, created = ExchangeRate.objects.get_or_create(currency_from=curr_from, currency_to=curr_to)
         ex_rate.rate = rate
         ex_rate.save()
 
