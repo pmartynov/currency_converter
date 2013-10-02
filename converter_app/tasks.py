@@ -1,13 +1,14 @@
+from datetime import timedelta
+
 from __future__ import absolute_import
 from django.db import transaction
 from celery.task import periodic_task
-from celery.task.schedules import crontab
 from converter_app.models import Currency, ExchangeRate
 from converter_app.external_settings import *
 import requests
 
 
-@periodic_task(run_every=crontab(hour="0-23"))
+@periodic_task(run_every=timedelta(minutes=60))
 @transaction.commit_manually
 def update_currencies():
     try:
@@ -22,7 +23,7 @@ def update_currencies():
     transaction.commit()
 
 
-@periodic_task(run_every=crontab(hour="0-23"))
+@periodic_task(run_every=timedelta(minutes=60))
 @transaction.commit_manually
 def update_rates():
     try:
