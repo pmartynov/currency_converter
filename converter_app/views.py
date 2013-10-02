@@ -13,11 +13,6 @@ from .cache_wrappers import *
 from .helpers import *
 
 
-def _get_redirect_obj(req):
-    kwargs = {'curr_from': req["from"], 'curr_to': req["to"], 'amount': req["amount"], 'response_format': "html"}
-    return HttpResponseRedirect(reverse('conversion_result', kwargs=kwargs))
-
-
 def _render_error_html(request, status, message):
     return TemplateResponse(request, 'error.html', context={'message': message}, status=status)
 
@@ -48,7 +43,9 @@ def _conversion_result_text(request, conversion):
 
 def landing(request):
     if request.method == 'POST':
-        return _get_redirect_obj(request.POST)
+        POST = request.POST
+        if 'from' in POST and 'to'in POST and 'amount' in POST and 'response_format' in POST:
+            return HttpResponseRedirect(reverse('conversion_result', kwargs=request.POST))
 
     return render_to_response('landing.html', {'currencies': get_currencies()}, RequestContext(request))
 
