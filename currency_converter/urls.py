@@ -15,5 +15,5 @@ urlpatterns += patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-handler404 = views.error404
+# Adding context variables to 500 error template to load static.
 handler500 = views.error500
