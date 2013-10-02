@@ -1,7 +1,6 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from converter_app import views
 
 admin.autodiscover()
 
@@ -15,5 +14,5 @@ urlpatterns += patterns('',
     url(r'^admin/', include(admin.site.urls)),
 )
 
-# Adding context variables to 500 error template to load static.
-handler500 = views.error500
+# Adding context variables to 500 error template to load stat
+handler500 = 'converter_app.error_handlers.error500'

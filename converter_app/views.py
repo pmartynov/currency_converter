@@ -11,7 +11,6 @@ from django.template.response import TemplateResponse
 from .models import Currency, ExchangeRate
 from .cache_wrappers import *
 from .helpers import *
-from .error_handlers import *
 
 
 def _get_redirect_obj(req):
