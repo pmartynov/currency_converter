@@ -1,11 +1,11 @@
 from datetime import timedelta
 
-from __future__ import absolute_import
+import requests
 from django.db import transaction
 from celery.task import periodic_task
-from converter_app.models import Currency, ExchangeRate
-from converter_app.external_settings import *
-import requests
+
+from .models import Currency, ExchangeRate
+from .external_settings import *
 
 
 @periodic_task(run_every=timedelta(minutes=60))

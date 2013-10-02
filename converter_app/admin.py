@@ -1,6 +1,7 @@
 from django.contrib import admin
-from converter_app.models import ExchangeRate, Currency
-from converter_app.helpers import strip_zeros
+
+from .models import ExchangeRate, Currency
+from .helpers import strip_zeros
 
 
 class ExchangeRateAdmin(admin.ModelAdmin):

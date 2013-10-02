@@ -1,15 +1,17 @@
+import sys
+import json
+from decimal import Decimal
+
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.template.response import TemplateResponse
-from decimal import Decimal
-from converter_app.models import Currency, ExchangeRate
-from converter_app.cache_wrappers import *
-from converter_app.helpers import *
-from converter_app.error_handlers import *
-import sys
-import json
+
+from .models import Currency, ExchangeRate
+from .cache_wrappers import *
+from .helpers import *
+from .error_handlers import *
 
 
 def _get_redirect_obj(req):

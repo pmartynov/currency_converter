@@ -1,5 +1,6 @@
 from django.core.cache import cache
-from converter_app.models import Currency, ExchangeRate
+
+from .models import Currency, ExchangeRate
 
 
 CURRENCIES_KEY = "currencies"

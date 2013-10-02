@@ -8,7 +8,8 @@ Replace this with more appropriate tests for your application.
 from django.test import TestCase
 from django.test.client import Client
 from django.core.urlresolvers import reverse
-from converter_app.models import Currency, ExchangeRate
+
+from .models import Currency, ExchangeRate
 
 
 class ConverterTestCase(TestCase):

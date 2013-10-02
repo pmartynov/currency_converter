@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, include, url
-from converter_app import views
 from django.contrib import admin
+
+from converter_app import views
+
 admin.autodiscover()
 
 urlpatterns = patterns('converter_app.views',
