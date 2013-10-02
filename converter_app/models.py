@@ -13,6 +13,7 @@ class Currency(models.Model):
 
     class Meta:
         verbose_name_plural = "currencies"
+        ordering = ('short_name',)
 
 
 class ExchangeRate(models.Model):
@@ -30,3 +31,4 @@ class ExchangeRate(models.Model):
 
     class Meta:
         unique_together = ('currency_from', 'currency_to')
+        ordering = ('currency_from', 'currency_to')
