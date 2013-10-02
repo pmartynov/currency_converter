@@ -8,9 +8,6 @@ class Currency(models.Model):
     def is_less_than(self, other):
         return self.short_name < other.short_name
 
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.short_name == other.short_name
-
     def __unicode__(self):
         return "%s - %s" % (self.short_name, self.long_name)
 
@@ -30,10 +27,6 @@ class ExchangeRate(models.Model):
     @property
     def rate_label(self):
         return "%s to %s" % (self.currency_from.short_name, self.currency_to.short_name)
-
-    def __eq__(self, other):
-        return isinstance(other, self.__class__) and self.currency_from == other.currency_from\
-            and self.currency_to == other.currency_to
 
     class Meta:
         unique_together = ('currency_from', 'currency_to')
