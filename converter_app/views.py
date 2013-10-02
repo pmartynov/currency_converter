@@ -54,9 +54,6 @@ def landing(request):
 
 
 def conversion_result(request, curr_from, curr_to, amount, response_format):
-    if request.method == 'POST':
-        return _get_redirect_obj(request.POST)
-
     try:
         amount = Decimal(amount)
         currencies = get_currencies()
