@@ -1,8 +1,12 @@
+import urllib
 from decimal import Decimal
+
+from django.core.urlresolvers import reverse
 
 
 def strip_zeros(dec):
-    return Decimal(str(round(dec, 6)).strip('0').rstrip('.'))
+    dec = str(round(dec, 2)).strip('0').rstrip('.')
+    return Decimal(dec) if dec else 0
 
 
 def binary_search(a, x, lo=0, hi=None):
@@ -19,4 +23,12 @@ def binary_search(a, x, lo=0, hi=None):
         else:
             return mid
 
-    return -1
+    assert False
+
+
+def build_url(*args, **kwargs):
+    get = kwargs.pop('get', {})
+    url = reverse(*args, **kwargs)
+    if get:
+        url += '?' + urllib.urlencode(get)
+    return url

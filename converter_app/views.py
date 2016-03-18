@@ -1,16 +1,16 @@
-import sys
+import decimal
 import json
+import sys
 from decimal import Decimal
 
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponse, HttpResponseRedirect
-from django.core.urlresolvers import reverse
 from django.template.response import TemplateResponse
 
-from .models import Currency, ExchangeRate
 from .cache_wrappers import get_currencies, get_exchange_rates
-from .helpers import strip_zeros, binary_search
+from .helpers import strip_zeros, binary_search, build_url
+from .models import Currency, ExchangeRate
 
 
 def _render_error_html(request, status, message):
@@ -46,20 +46,31 @@ def landing(request):
         POST = request.POST
         if 'from' in POST and 'to' in POST and 'amount' in POST:
             kwargs = {
-                'curr_from': POST['from'], 'curr_to': POST['to'], 'amount': POST['amount'],
-                'response_format': POST.get('response_format', 'html')
+                'curr_from': POST['from'], 'curr_to': POST['to'], 'amount': POST['amount']
             }
-            return HttpResponseRedirect(reverse('conversion_result', kwargs=kwargs))
+            return HttpResponseRedirect(build_url('conversion_result', get=kwargs))
 
     return render_to_response('landing.html', {'currencies': get_currencies()}, RequestContext(request))
 
 
-def conversion_result(request, curr_from, curr_to, amount, response_format):
+def conversion_result(request):
+    curr_from = request.GET.get('curr_from', None)
+    curr_to = request.GET.get('curr_to', None)
+    amount = request.GET.get('amount', None)
+    response_format = request.GET.get('response_format', 'html')
+
+    if not all([curr_from, curr_to, amount]):
+        return _process_error(request, 400, 'Incorrect query parameters', response_format)
+
+    currencies = get_currencies()
+    exchange_rates = get_exchange_rates()
+
     try:
         amount = Decimal(amount)
-        currencies = get_currencies()
-        exchange_rates = get_exchange_rates()
+    except decimal.InvalidOperation:
+        return _process_error(request, 400, 'The amount is incorrect', response_format)
 
+    try:
         curr_usd = currencies[binary_search(currencies, Currency(short_name="USD"))]
         curr_from = currencies[binary_search(currencies, Currency(short_name=curr_from))]
         curr_to = currencies[binary_search(currencies, Currency(short_name=curr_to))]
@@ -68,19 +79,17 @@ def conversion_result(request, curr_from, curr_to, amount, response_format):
             binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_from))]
         ex_rate_to = exchange_rates[
             binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_to))]
-
         result = amount / ex_rate_from.rate * ex_rate_to.rate
-
-        conversion = {
-            'curr_from': curr_from.short_name,
-            'curr_to': curr_to.short_name,
-            'amount': strip_zeros(amount),
-            'result': strip_zeros(result),
-            'currencies': currencies
-        }
-
-        process_conversion_result = getattr(sys.modules[__name__], "_conversion_result_%s" % response_format)
-        return process_conversion_result(request, conversion)
-
-    except AssertionError:
+    except (AssertionError, IndexError, ZeroDivisionError):
         return _process_error(request, 400, 'Currency is not supported', response_format)
+
+    conversion = {
+        'curr_from': curr_from.short_name,
+        'curr_to': curr_to.short_name,
+        'amount': strip_zeros(amount),
+        'result': strip_zeros(result),
+        'currencies': currencies
+    }
+
+    process_conversion_result = getattr(sys.modules[__name__], "_conversion_result_%s" % response_format)
+    return process_conversion_result(request, conversion)
