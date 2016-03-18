@@ -1,15 +1,13 @@
 from datetime import timedelta
 
 import requests
-from django.db import transaction
 from celery.task import periodic_task
 
 from .models import Currency, ExchangeRate
-from .external_settings import *
+from .external_settings import OER_LATEST_URL, OER_CURRENCIES_URL
 
 
 @periodic_task(run_every=timedelta(minutes=60))
-@transaction.commit_manually
 def update_currencies():
     try:
         currencies = requests.get(OER_CURRENCIES_URL).json()
@@ -17,14 +15,10 @@ def update_currencies():
         return
 
     for short, long in currencies.iteritems():
-        currency = Currency(short_name=short, long_name=long.encode('unicode_escape'))
-        currency.save()
-
-    transaction.commit()
+        Currency.objects.get_or_create(short_name=short, long_name=long.encode('unicode_escape'))
 
 
 @periodic_task(run_every=timedelta(minutes=60))
-@transaction.commit_manually
 def update_rates():
     try:
         rates = requests.get(OER_LATEST_URL).json()["rates"]
@@ -37,6 +31,3 @@ def update_rates():
         ex_rate, created = ExchangeRate.objects.get_or_create(currency_from=curr_from, currency_to=curr_to)
         ex_rate.rate = rate
         ex_rate.save()
-
-    transaction.commit()
-

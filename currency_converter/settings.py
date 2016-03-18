@@ -1,8 +1,5 @@
 import os
 
-import djcelery
-djcelery.setup_loader()
-
 BASEDIR = os.path.abspath(os.path.dirname(__file__))
 PROJECT_ROOT = os.path.join(BASEDIR, '../')
 
@@ -128,12 +125,23 @@ INSTALLED_APPS = (
     'converter_app',
     'devserver',
     'djcelery',
+    'kombu.transport.django',
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+
+CELERY_ACCEPT_CONTENT = ['json']
+
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+BROKER_URL = 'django://'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -205,3 +213,5 @@ CACHES = get_cache()
 if os.path.isfile(os.path.join(BASEDIR, 'settings_local.py')):
     from .settings_local import *
 
+import djcelery
+djcelery.setup_loader()

@@ -9,8 +9,8 @@ from django.core.urlresolvers import reverse
 from django.template.response import TemplateResponse
 
 from .models import Currency, ExchangeRate
-from .cache_wrappers import *
-from .helpers import *
+from .cache_wrappers import get_currencies, get_exchange_rates
+from .helpers import strip_zeros, binary_search
 
 
 def _render_error_html(request, status, message):
@@ -44,7 +44,7 @@ def _conversion_result_text(request, conversion):
 def landing(request):
     if request.method == 'POST':
         POST = request.POST
-        if 'from' in POST and 'to'in POST and 'amount' in POST and 'response_format' in POST:
+        if 'from' in POST and 'to' in POST and 'amount' in POST and 'response_format' in POST:
             return HttpResponseRedirect(reverse('conversion_result', kwargs=request.POST))
 
     return render_to_response('landing.html', {'currencies': get_currencies()}, RequestContext(request))
