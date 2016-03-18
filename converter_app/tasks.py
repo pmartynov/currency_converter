@@ -25,9 +25,15 @@ def update_rates():
     except (requests.exceptions.ConnectionError, KeyError):
         return
 
-    curr_from = Currency.objects.get(short_name="USD")
+    try:
+        curr_from = Currency.objects.get(short_name="USD")
+    except Currency.DoesNotExist:
+        return
     for short, rate in rates.iteritems():
-        curr_to = Currency.objects.get(short_name=short)
+        try:
+            curr_to = Currency.objects.get(short_name=short)
+        except Currency.DoesNotExist:
+            continue
         ex_rate, created = ExchangeRate.objects.get_or_create(currency_from=curr_from, currency_to=curr_to)
         ex_rate.rate = rate
         ex_rate.save()

@@ -122,11 +122,11 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'converter_app',
-    'devserver',
-    'djcelery',
     'kombu.transport.django',
     'django.contrib.admin',
+    'devserver',
+    'djcelery',
+    'converter_app',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
 )

@@ -44,8 +44,12 @@ def _conversion_result_text(request, conversion):
 def landing(request):
     if request.method == 'POST':
         POST = request.POST
-        if 'from' in POST and 'to' in POST and 'amount' in POST and 'response_format' in POST:
-            return HttpResponseRedirect(reverse('conversion_result', kwargs=request.POST))
+        if 'from' in POST and 'to' in POST and 'amount' in POST:
+            kwargs = {
+                'curr_from': POST['from'], 'curr_to': POST['to'], 'amount': POST['amount'],
+                'response_format': POST.get('response_format', 'html')
+            }
+            return HttpResponseRedirect(reverse('conversion_result', kwargs=kwargs))
 
     return render_to_response('landing.html', {'currencies': get_currencies()}, RequestContext(request))
 

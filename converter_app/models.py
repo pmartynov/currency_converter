@@ -19,7 +19,7 @@ class Currency(models.Model):
 class ExchangeRate(models.Model):
     currency_from = models.ForeignKey(Currency, related_name="+", unique=False)
     currency_to = models.ForeignKey(Currency, related_name="+", unique=False)
-    rate = models.DecimalField(max_digits=24, decimal_places=12, unique=False)
+    rate = models.DecimalField(null=True, blank=True, max_digits=24, decimal_places=12)
 
     def is_less_than(self, other):
         return self.currency_from.is_less_than(other.currency_from) or\
@@ -28,6 +28,9 @@ class ExchangeRate(models.Model):
     @property
     def rate_label(self):
         return "%s to %s" % (self.currency_from.short_name, self.currency_to.short_name)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.currency_from.short_name, self.currency_to.short_name)
 
     class Meta:
         unique_together = ('currency_from', 'currency_to')
