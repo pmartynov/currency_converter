@@ -13,4 +13,5 @@ pytz==2013.6
 readline==6.2.4.1
 requests==2.0.0
 six==1.4.1
+South==1.0.2
 wheel==0.24.0
