@@ -8,8 +8,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.response import TemplateResponse
 
-from .cache_wrappers import get_currencies, get_exchange_rates
-from .helpers import strip_zeros, binary_search, build_url
+from .cache_wrappers import get_currencies
+from .helpers import strip_zeros, build_url
 from .models import Currency, ExchangeRate
 
 
@@ -63,7 +63,6 @@ def conversion_result(request):
         return _process_error(request, 400, 'Incorrect query parameters', response_format)
 
     currencies = get_currencies()
-    exchange_rates = get_exchange_rates()
 
     try:
         amount = Decimal(amount)
@@ -71,16 +70,15 @@ def conversion_result(request):
         return _process_error(request, 400, 'The amount is incorrect', response_format)
 
     try:
-        curr_usd = currencies[binary_search(currencies, Currency(short_name="USD"))]
-        curr_from = currencies[binary_search(currencies, Currency(short_name=curr_from))]
-        curr_to = currencies[binary_search(currencies, Currency(short_name=curr_to))]
+        curr_usd = Currency.objects.get(short_name='USD')
+        curr_from = Currency.objects.get(short_name=curr_from)
+        curr_to = Currency.objects.get(short_name=curr_to)
 
-        ex_rate_from = exchange_rates[
-            binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_from))]
-        ex_rate_to = exchange_rates[
-            binary_search(exchange_rates, ExchangeRate(currency_from=curr_usd, currency_to=curr_to))]
+        ex_rate_from = ExchangeRate.objects.get(currency_from=curr_usd, currency_to=curr_from)
+        ex_rate_to = ExchangeRate.objects.get(currency_from=curr_usd, currency_to=curr_to)
+
         result = amount / ex_rate_from.rate * ex_rate_to.rate
-    except (AssertionError, IndexError, ZeroDivisionError):
+    except (Currency.DoesNotExist, ExchangeRate.DoesNotExist, ZeroDivisionError):
         return _process_error(request, 400, 'Currency is not supported', response_format)
 
     conversion = {
